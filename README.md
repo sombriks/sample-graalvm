@@ -1,6 +1,6 @@
 # Sample GraalVM project
 
-Testing benefits of native images
+Testing the benefits of native images
 
 ## Requirements
 
