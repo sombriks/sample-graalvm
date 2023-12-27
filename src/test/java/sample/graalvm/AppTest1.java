@@ -4,11 +4,13 @@
 package sample.graalvm;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class AppTest {
-    @Test void appHasAGreeting() {
+class AppTest1 {
+    @Test
+    void appHasAGreeting() {
         App classUnderTest = new App();
-        assertNotNull(classUnderTest.getApp(), "app should have a greeting");
+        assertNotNull(classUnderTest.getJavalin(), "app should have a javalin instance");
     }
 }

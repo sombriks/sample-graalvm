@@ -3,11 +3,11 @@ package sample.graalvm
 import io.javalin.Javalin
 
 class App {
-    val app = Javalin.create(/*config*/)
+    val javalin = Javalin.create(/*config*/)
         .get("/") { ctx -> ctx.result(Foo().foo) }
 }
 
 fun main() {
-    App().app
+    App().javalin
         .start(7070)
 }
