@@ -167,6 +167,12 @@ official GraalVM images on docker hub.
 Another drawback was java version inside GraalVM images. It's still java 17 and
 because of that it was needed to downgrade java to 17 in `build.gradle.kts`.
 
+Make sure you're built the shadow jar already:
+
+```bash
+./gradlew build shadowJar
+```
+
 Build the docker image using the [sample dockerfile][df]:
 
 ```bash
@@ -179,12 +185,10 @@ Test it with docker as a regular docker image:
 docker run --rm -it -p 7070:7070 sombriks/sample-graalvm:testing
 ```
 
-The output i got was something like that:
+Since this is a fallback image, you still need the original jar and a container
+image able to provide a jvm.
 
-    Error: Could not find or load main class sample.graalvm.AppKt
-    Caused by: java.lang.ClassNotFoundException: sample.graalvm.AppKt
-
-Why is it happening is still unknown.
+See the dockerfile for more details.
 
 ## Conclusion
 

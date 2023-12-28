@@ -19,9 +19,13 @@ ADD build/libs/sample-graalvm-all.jar ./
 
 RUN native-image -jar /build/sample-graalvm-all.jar -o /build/sample-graalvm
 
-FROM ghcr.io/graalvm/jdk:22 as PART2
+# FROM ghcr.io/graalvm/jdk:22 as PART2
+FROM eclipse-temurin:21-jre-jammy as PART2
 
+# fallback images still relies on original jar and the installed jvm
+# so we still need a jvm base image and the original jar.
 COPY --from=PART1 /build/sample-graalvm /sample-graalvm
+COPY --from=PART1 /build/sample-graalvm-all.jar /sample-graalvm-all.jar
 
 EXPOSE 7070
 
