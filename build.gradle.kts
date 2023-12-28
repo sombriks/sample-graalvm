@@ -18,7 +18,6 @@ dependencies {
     implementation("io.javalin:javalin-bundle:6.0.0-beta.4")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testImplementation("org.hamcrest:hamcrest:2.2")
-
 }
 
 application {

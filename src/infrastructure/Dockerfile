@@ -1,17 +1,28 @@
-# TODO make this Dockerfile customizable (ARGS, ENV, ETC)
-FROM ghcr.io/graalvm/jdk-community:21 as PART1
+# TODO make this Dockerfile customizable (ARGS, ENV, PORT, etc)
+# TODO again, a gradle build as part of the image creation is a horrible idea
+#FROM gradle:jdk21 as PART0
+#
+#WORKDIR /sample-graalvm
+#
+#ADD build.gradle.kts settings.gradle.kts ./
+#ADD src src/
+#
+#RUN gradle build test shadowJar --no-daemon
 
-WORKDIR /sample-graalvm
+FROM ghcr.io/graalvm/native-image:22 as PART1
 
-ADD build.gradle.kts gradlew settings.gradle.kts ./
-ADD src src/
-ADD gradle gradle/
+WORKDIR /build
 
-RUN ./gradlew build test shadowJar
-RUN native-image -jar build/libs/sample-graalvm-all.jar -o build/sample-graalvm
+#COPY --from=PART0 /sample-graalvm/build/libs/sample-graalvm-all.jar /build/sample-graalvm-all.jar
 
-FROM eclipse-temurin:21-jre-jammy as PART2
+ADD build/libs/sample-graalvm-all.jar ./
 
-COPY --from=PART1 /sample-graalvm/build/sample-graalvm /sample-graalvm
+RUN native-image -jar /build/sample-graalvm-all.jar -o /build/sample-graalvm
+
+FROM ghcr.io/graalvm/jdk:22 as PART2
+
+COPY --from=PART1 /build/sample-graalvm /sample-graalvm
+
+EXPOSE 7070
 
 ENTRYPOINT /sample-graalvm

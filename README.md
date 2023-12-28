@@ -141,7 +141,7 @@ Output is quite the same of jar version, but:
 - Execution startup time, according to the log, is 840ms (jetty) + 287ms (javalin)
 - The binary is a regular executable (ELF 64-bit LSB executable, x86-64)
 
-There is one important note however. This warning in the output:
+There is one important note, however. This warning in the output:
 
     Warning: Image 'sample-graalvm' is a fallback image that requires a JDK for execution (use --no-fallback to suppress fallback image generation and to print more detailed information why a fallback image was necessary).
 
@@ -155,24 +155,46 @@ the binary is just a fancy way to produce runtime errors.
 
 ## Docker
 
-Since it's a binary the usual trick to create the jar file and then just wrap it
-inside an image will need that extra step.
+The usual trick to create the jar file and then just wrap it inside an image is
+supposed to work here, just using an extra step to transform the jar into a
+native image.
 
 Which means a [multi-stage build][msb].
 
-There are official [GraalVM images][gvi] available. There are no official
-graalvm on docker hub.
+There are official [GraalVM images][gvi] available on GitHub. There are no
+official GraalVM images on docker hub.
 
-Build the docker image using the [sample dockerfile][df] and this command:
+Another drawback was java version inside GraalVM images. It's still java 17 and
+because of that it was needed to downgrade java to 17 in `build.gradle.kts`.
+
+Build the docker image using the [sample dockerfile][df]:
 
 ```bash
 docker build -f src/infrastructure/Dockerfile -t sombriks/sample-graalvm:testing .
 ```
 
+Test it with docker as a regular docker image:
+
+```bash
+docker run --rm -it -p 7070:7070 sombriks/sample-graalvm:testing
+```
+
+The output i got was something like that:
+
+    Error: Could not find or load main class sample.graalvm.AppKt
+    Caused by: java.lang.ClassNotFoundException: sample.graalvm.AppKt
+
+Why is it happening is still unknown.
+
 ## Conclusion
 
 All in all keep jvm dependency isn't a bad deal and the performance gain is
 promising.
+
+But the docker image should work and due to the need of several architectures
+support, one could argue that native images are a no-go for the moment.
+
+As future experiment let's try to use a more vanilla project, without kotlin.
 
 [sdk]: https://sdkman.io
 [shadow-jar]: https://imperceptiblethoughts.com/shadow/getting-started/#getting-started
